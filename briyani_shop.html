@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biryani Shop</title>
+    <style>
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .menu-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Biryani Shop Menu</h1>
+    <div id="menu"></div>
+    <button onclick="loadMenu()" id="button">GET MENU DETAILS</button>
+    <script>
+        function loadMenu() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "biryaniMenu.xml");        
+            xhr.onreadystatechange = function() {
+                if ( xhr.status === 200) {
+                    console.log("xml received");
+                    displayMenu(xhr);
+                  
+                }
+               
+            };
+            xhr.send();
+        }
+
+        function displayMenu(xml) {
+            const menuDiv = document.getElementById("menu");
+            const items = xml.responseXML.getElementsByTagName("item");
+
+            for (let i = 0; i < items.length; i++) {
+                const name = items[i].getElementsByTagName("name")[0]?.textContent ?? "Unknown Biryani";
+                const price = items[i].getElementsByTagName("price")[0]?.textContent ?? "N/A";
+                const quantity = items[i].getElementsByTagName("quantity")[0]?.textContent ?? "1";
+                const image = items[i].getElementsByTagName("image")[0]?.textContent ?? "default.jpg";
+
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("menu-item");
+
+                itemDiv.innerHTML = `
+                    <img src="${image}" alt="${name}" onerror="this.src='default.jpg'">
+                    <div>
+                        <h2>${name}</h2>
+                        <p>Price: $${price}</p>
+                        <p>Quantity: ${quantity}</p>
+                    </div>
+                `;
+
+                menuDiv.appendChild(itemDiv);   
+            }
+        }
+    </script>
+</body>
+</html>
